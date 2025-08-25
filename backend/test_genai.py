@@ -33,7 +33,7 @@ prompt = f"""
 
 
 # The client gets the API key from the environment variable `GEMINI_API_KEY`.
-client = genai.Client(api_key="AIzaSyDwuvIcamf47hmF2ys647jYarcpHLLQ5Ws")
+client = genai.Client(api_key="")
 
 response = client.models.generate_content(
     model="gemini-2.5-flash", contents=prompt
