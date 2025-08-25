@@ -1,4 +1,9 @@
+from dotenv import load_dotenv
+import os
 from google import genai
+
+load_dotenv()  # .envファイルを読み込む
+api_key = os.getenv("GEMINI_API_KEY")
 
 # 質問を定義
 q1 = "今の自分を変化させたいと感じる時、まず「見た目」から変えたいと思いますか？"
@@ -33,7 +38,7 @@ prompt = f"""
 
 
 # The client gets the API key from the environment variable `GEMINI_API_KEY`.
-client = genai.Client(api_key="")
+client = genai.Client(api_key=api_key)
 
 response = client.models.generate_content(
     model="gemini-2.5-flash", contents=prompt
