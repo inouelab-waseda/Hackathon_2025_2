@@ -124,6 +124,13 @@ dev-backend:
 	@echo "🐍 バックエンド開発サーバーを起動中..."
 	@echo "🔧 API: http://localhost:8000"
 	@echo "📊 ドキュメント: http://localhost:8000/docs"
+	@echo "🔄 依存関係をチェック中..."
+	@if ! command -v uvicorn >/dev/null 2>&1; then \
+		echo "⚠️  uvicornが見つかりません。バックエンドの依存関係をインストールします..."; \
+		cd backend && pip install -r requirements.txt; \
+	fi
+	@echo "✅ 依存関係のチェックが完了しました"
+	@echo "🔄 サーバーを起動中..."
 	cd backend && uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 test-backend:
@@ -145,6 +152,12 @@ format-backend:
 setup: install-frontend install-backend
 	@echo "✅ 開発環境のセットアップが完了しました！"
 	@echo ""
+	@echo "💡 推奨: Python仮想環境を使用することをお勧めします"
+	@echo "  python -m venv venv"
+	@echo "  source venv/bin/activate  # macOS/Linux"
+	@echo "  # または"
+	@echo "  venv\\Scripts\\activate     # Windows"
+	@echo ""
 	@echo "🚀 次のコマンドでアプリケーションを起動できます："
 	@echo "  make up              - Docker Composeで起動"
 	@echo "  make dev             - ローカルで同時起動"
@@ -161,6 +174,20 @@ dev:
 	@echo "💡 ヒント: 別々のターミナルで起動する場合は："
 	@echo "  ターミナル1: make dev-backend"
 	@echo "  ターミナル2: make dev-frontend"
+	@echo ""
+	@echo "🔄 依存関係をチェック中..."
+	@echo "=================================="
+	@echo "バックエンドの依存関係をチェック中..."
+	@if ! command -v uvicorn >/dev/null 2>&1; then \
+		echo "⚠️  uvicornが見つかりません。バックエンドの依存関係をインストールします..."; \
+		cd backend && pip install -r requirements.txt; \
+	fi
+	@echo "フロントエンドの依存関係をチェック中..."
+	@if [ ! -d "frontend/node_modules" ]; then \
+		echo "⚠️  node_modulesが見つかりません。フロントエンドの依存関係をインストールします..."; \
+		cd frontend && npm install; \
+	fi
+	@echo "✅ 依存関係のチェックが完了しました"
 	@echo ""
 	@echo "🔄 起動中... (Ctrl+C で停止)"
 	@echo "=================================="
