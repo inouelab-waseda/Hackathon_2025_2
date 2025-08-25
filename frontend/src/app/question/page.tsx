@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { QuestionManager, type Answer } from "./question";
+"use client";
+
+import React, { useState } from "react";
+import { QuestionManager, type Answer } from "@/lib/question";
 import "./question.css";
 
-export function meta() {
-  return [
-    { title: "アキネーター風質問" },
-    { name: "description", content: "質問に答えて結果を確認しましょう！" },
-  ];
-}
-
-export function loader() {
-  return null;
-}
-
-export const QuestionPage: React.FC = () => {
+export default function QuestionPage() {
   const [questionManager] = useState(() => new QuestionManager());
   const [state, setState] = useState(questionManager.getState());
   const [progress, setProgress] = useState(questionManager.getProgress());
@@ -90,6 +81,4 @@ export const QuestionPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default QuestionPage;
+}

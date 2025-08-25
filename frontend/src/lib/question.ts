@@ -82,9 +82,9 @@ export class QuestionManager {
     const noAnswers = Array.from(this.state.answers.values()).filter(
       (a) => a === "no"
     ).length;
-    const unknownAnswers = Array.from(this.state.answers.values()).filter(
-      (a) => a === "unknown"
-    ).length;
+    // const unknownAnswers = Array.from(this.state.answers.values()).filter(
+    //   (a) => a === "unknown"
+    // ).length;
 
     // 簡単な結果判定ロジック（実際のアプリではより複雑なアルゴリズムを使用）
     if (yesAnswers > noAnswers) {
