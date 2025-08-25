@@ -42,6 +42,14 @@ async def health_check():
         message="API is running successfully"
     )
 
+# ヘルスチェックエンドポイント
+@app.get("/hello", response_model=HealthResponse)
+async def hello():
+    return HealthResponse(
+        status="hello",
+        message="API is running successfully"
+    )
+
 # サンプルAPIエンドポイント
 @app.get("/api/items", response_model=List[ItemResponse])
 async def get_items():
