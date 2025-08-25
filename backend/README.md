@@ -11,19 +11,7 @@ Hackathon 2025 プロジェクトのバックエンド API
 
 ## ローカル開発環境での実行
 
-### 方法 1: Docker Compose を使用（推奨）
-
-プロジェクトルートディレクトリで以下を実行：
-
-```bash
-# プロジェクト全体（frontend + backend）を起動
-docker-compose up --build
-
-# バックエンドのみ起動
-docker-compose up backend --build
-```
-
-### 方法 2: 直接実行
+### 方法 1: 直接実行
 
 ```bash
 # 依存関係をインストール

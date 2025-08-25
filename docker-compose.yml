@@ -19,7 +19,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "5173:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -29,6 +29,7 @@ services:
       - backend
     networks:
       - app-network
+    command: npm run dev -- --host
 
 networks:
   app-network:
