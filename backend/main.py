@@ -23,7 +23,7 @@ app.add_middleware(
 class HealthResponse(BaseModel):
     status: str
     message: str
-    
+
 class ItemResponse(BaseModel):
     id: int
     name: str
