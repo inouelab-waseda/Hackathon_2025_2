@@ -49,7 +49,7 @@ up:
 	@echo "🚀 Docker Composeでアプリケーションを起動中..."
 	docker-compose up -d
 	@echo "✅ アプリケーションが起動しました！"
-	@echo "📱 フロントエンド: http://localhost:5173"
+	@echo "📱 フロントエンド: http://localhost:3000"
 	@echo "🔧 バックエンド: http://localhost:8000"
 	@echo "📊 API ドキュメント: http://localhost:8000/docs"
 
@@ -57,7 +57,7 @@ up-frontend:
 	@echo "🎨 フロントエンドのみをDockerで起動中..."
 	docker-compose up -d frontend
 	@echo "✅ フロントエンドが起動しました！"
-	@echo "📱 アクセス: http://localhost:5173"
+	@echo "📱 アクセス: http://localhost:3000"
 
 up-backend:
 	@echo "🐍 バックエンドのみをDockerで起動中..."
@@ -92,7 +92,7 @@ install-frontend:
 
 dev-frontend:
 	@echo "🎨 フロントエンド開発サーバーを起動中..."
-	@echo "📱 アクセス: http://localhost:5173"
+	@echo "📱 アクセス: http://localhost:3000"
 	cd frontend && npm run dev
 
 build-frontend:
@@ -167,7 +167,7 @@ setup: install-frontend install-backend
 # 開発サーバー起動（ローカル）
 dev:
 	@echo "🚀 フロントエンドとバックエンドを同時起動中..."
-	@echo "📱 フロントエンド: http://localhost:5173"
+	@echo "📱 フロントエンド: http://localhost:3000"
 	@echo "🔧 バックエンド: http://localhost:8000"
 	@echo "📊 API ドキュメント: http://localhost:8000/docs"
 	@echo ""
