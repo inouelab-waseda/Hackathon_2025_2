@@ -2,45 +2,45 @@ from dotenv import load_dotenv
 import os
 from google import genai
 
-load_dotenv()  # .envファイルを読み込む
-api_key = os.getenv("GEMINI_API_KEY")
+class genai():
+    def __init__(self):
+        self.api_key = os.getenv("GEMINI_API_KEY")
+        self.client = genai.Client(api_key=self.api_key)
 
-# 質問を定義
-q1 = "今の自分を変化させたいと感じる時、まず「見た目」から変えたいと思いますか？"
-q2 = "その自分磨きは、仕事や将来のキャリアに直接役立てたいですか？"
-q3 = "体を動かして汗を流すことに、ポジティブな気持ちや達成感を感じますか？"
-q4 = "目標達成のために、毎日コツコツと時間をかけるのは得意な方ですか？"
-q5 = "目に見える「形」や「成果」（点数、資格、体重の変化など）がわかる方が、モチベーションを維持しやすいですか？"
+    def propose(self):
+        load_dotenv()  # .envファイルを読み込む
 
-# 回答例（実際はユーザー入力に置き換えてください）
-a1 = "はい"
-a2 = "いいえ"
-a3 = "わからない"
-a4 = "はい"
-a5 = "いいえ"
+        questions = []
+        answers = []
+        num_questions = 5
 
-# プロンプトを作成
-prompt = f"""
-あなたは自分磨きのアドバイザーです。
-以下の質問と回答を参考に、回答者に最適な自分磨きの内容を100文字以内で提案してください。
+        # 最初の質問をAPIに生成させる
+        prompt = """回答者に最適な自分磨き(読書・運動・美容など)を提案するために必要な質問を1つ出してください。「はい」「いいえ」「わからない」で答えられるものにしてください。また質問文のみを出力してください。"""
+        for i in range(num_questions):
+            # 質問生成
+            question_time = f"質問は上限{num_questions}で、次に出力する質問は{i+1}回目です。"
+            response = self.client.models.generate_content(
+                model="gemini-2.5-flash", contents=prompt+question_time
+            )
+            question = response.text.strip()
+            questions.append(question)
+            print(f"質問{i+1}: {question}")
 
-質問1: {q1}
-回答1: {a1}
-質問2: {q2}
-回答2: {a2}
-質問3: {q3}
-回答3: {a3}
-質問4: {q4}
-回答4: {a4}
-質問5: {q5}
-回答5: {a5}
-"""
+            # 回答（ここでは例として「はい」「いいえ」「わからない」を順番に使用）
+            answer = ["はい", "いいえ", "わからない"][i % 3]
+            answers.append(answer)
+            print(f"回答{i+1}: {answer}\n")
 
+            # 次の質問生成用プロンプト
+            prompt = f"前回の質問: {question}\n回答: {answer}\n次に、最適な自分磨き(読書・運動・美容など)を提案するために必要な質問を1つ出してください。「はい」「いいえ」「わからない」で答えられるものにしてください。また質問文のみを出力してください。"
 
-# The client gets the API key from the environment variable `GEMINI_API_KEY`.
-client = genai.Client(api_key=api_key)
+        # 最適な自分磨き提案をAPIに依頼
+        summary_prompt = "あなたは自分磨きのアドバイザーです。以下の質問と回答を参考に、回答者に最適な自分磨き(読書・運動・美容など)の内容を100文字以内で提案してください。\n"
+        for i in range(5):
+            summary_prompt += f"質問{i+1}: {questions[i]}\n回答{i+1}: {answers[i]}\n"
 
-response = client.models.generate_content(
-    model="gemini-2.5-flash", contents=prompt
-)
-print(response.text)
+        response = self.client.models.generate_content(
+            model="gemini-2.5-flash", contents=summary_prompt
+        )
+        print("\n最適な自分磨き提案:")
+        print(response.text.strip())
