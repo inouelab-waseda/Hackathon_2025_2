@@ -23,7 +23,7 @@ app.add_middleware(
 class HealthResponse(BaseModel):
     status: str
     message: str
-
+    
 class ItemResponse(BaseModel):
     id: int
     name: str
@@ -39,6 +39,14 @@ async def root():
 async def health_check():
     return HealthResponse(
         status="healthy",
+        message="API is running successfully"
+    )
+
+# ヘルスチェックエンドポイント
+@app.get("/hello", response_model=HealthResponse)
+async def hello():
+    return HealthResponse(
+        status="hello",
         message="API is running successfully"
     )
 
