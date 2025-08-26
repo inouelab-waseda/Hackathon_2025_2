@@ -31,21 +31,77 @@ export function useSignup() {
     setError("");
     setSuccess("");
 
+    // クライアントサイドのバリデーション
+    const trimmedEmail = formData.email.trim();
+    const trimmedPassword = formData.password.trim();
+    const trimmedFullName = formData.full_name?.trim() || "";
+
+    if (!trimmedEmail) {
+      setError("メールアドレスを入力してください");
+      setIsLoading(false);
+      return { success: false };
+    }
+
+    if (!trimmedPassword) {
+      setError("パスワードを入力してください");
+      setIsLoading(false);
+      return { success: false };
+    }
+
+    if (!trimmedFullName) {
+      setError("名前を入力してください");
+      setIsLoading(false);
+      return { success: false };
+    }
+
+    // メールアドレスの形式チェック
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError("メールアドレスの形式が正しくありません");
+      setIsLoading(false);
+      return { success: false };
+    }
+
+    // パスワードの長さチェック
+    if (trimmedPassword.length < 8) {
+      setError("パスワードは8文字以上で入力してください");
+      setIsLoading(false);
+      return { success: false };
+    }
+
     try {
       const result: SignupResponse = await signupAction(formData);
 
       if (result.success) {
-        setSuccess(result.message || "アカウントが正常に作成されました！");
+        setSuccess(
+          "アカウントが正常に作成されました！ログインページに移動します..."
+        );
         setFormData({ email: "", password: "", full_name: "" });
 
-        // 2秒後にログインページにリダイレクト
+        // 1.5秒後にログインページにリダイレクト
         setTimeout(() => {
           router.push("/login");
-        }, 2000);
+        }, 1500);
 
         return { success: true };
       } else {
-        setError(result.error || "サインアップに失敗しました。");
+        // エラーがオブジェクトの場合に備えて文字列に変換
+        const errorMessage =
+          typeof result.error === "string"
+            ? result.error
+            : "サインアップに失敗しました。";
+
+        // クライアントサイドで既にチェック済みのエラーは表示しない
+        if (
+          !errorMessage.includes("必須項目が入力されていません") &&
+          !errorMessage.includes("メールアドレスを入力してください") &&
+          !errorMessage.includes("パスワードを入力してください") &&
+          !errorMessage.includes("名前を入力してください") &&
+          !errorMessage.includes("メールアドレスの形式が正しくありません") &&
+          !errorMessage.includes("パスワードは8文字以上で入力してください")
+        ) {
+          setError(errorMessage);
+        }
         return { success: false };
       }
     } catch {
