@@ -1,6 +1,6 @@
 # Hackathon 2025 Project Makefile
 
-.PHONY: help build up up-frontend up-backend down logs logs-frontend logs-backend clean install-frontend install-backend dev dev-frontend dev-backend test-frontend test-backend lint-frontend lint-backend format-frontend format-backend typecheck-frontend setup production-build security-check update-deps
+.PHONY: help build up up-frontend up-backend down remake logs logs-frontend logs-backend clean install-frontend install-backend dev dev-frontend dev-backend test-frontend test-backend lint-frontend lint-backend format-frontend format-backend typecheck-frontend setup production-build security-check update-deps
 
 # デフォルトターゲット
 help:
@@ -17,13 +17,14 @@ help:
 	@echo "  make up-frontend       - フロントエンドのみDockerで起動"
 	@echo "  make up-backend        - バックエンドのみDockerで起動"
 	@echo "  make down              - アプリケーションを停止"
+	@echo "  make remake            - アプリケーションを再構築（down + build + up）"
 	@echo "  make logs              - ログを表示"
 	@echo "  make logs-frontend     - フロントエンドのログを表示"
 	@echo "  make logs-backend      - バックエンドのログを表示"
 	@echo ""
 	@echo "💻 ローカル開発:"
 	@echo "  make dev               - フロントエンドとバックエンドを同時起動"
-	@echo "  make dev-frontend      - フロントエンド開発サーバーを起動 (http://localhost:5173)"
+	@echo "  make dev-frontend      - フロントエンド開発サーバーを起動 (http://localhost:3000)"
 	@echo "  make dev-backend       - バックエンド開発サーバーを起動 (http://localhost:8000)"
 	@echo ""
 	@echo "🧪 テスト・品質管理:"
@@ -70,6 +71,16 @@ down:
 	@echo "🛑 アプリケーションを停止中..."
 	docker-compose down
 	@echo "✅ アプリケーションが停止しました"
+
+remake:
+	@echo "🔄 アプリケーションを再構築中..."
+	@echo "1️⃣ アプリケーションを停止中..."
+	$(MAKE) down
+	@echo "2️⃣ Dockerイメージをビルド中..."
+	$(MAKE) build
+	@echo "3️⃣ アプリケーションを起動中..."
+	$(MAKE) up
+	@echo "✅ アプリケーションの再構築が完了しました！"
 
 logs:
 	docker-compose logs -f
