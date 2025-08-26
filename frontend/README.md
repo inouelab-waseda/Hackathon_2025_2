@@ -1,87 +1,203 @@
-# Welcome to React Router!
+# アキネーター風性格診断アプリ - フロントエンド
 
-A modern, production-ready template for building full-stack React applications using React Router.
+Next.js 15.5.0 を使用したアキネーター風の性格診断アプリケーションのフロントエンドです。
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## 🚀 機能
 
-## Features
+### 認証前（未ログイン）
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- **ランディングページ**: アプリの紹介と特徴説明
+- **サインアップ**: モーダル形式のユーザー登録
+- **デモページ**: アプリの機能紹介とサンプル質問
 
-## Getting Started
+### 認証後（ログイン済み）
 
-### Installation
+- **性格診断**: アキネーター風の質問に回答
+- **結果表示**: AI 分析による性格タイプの診断結果
+- **ナビゲーション**: ログアウト機能付きヘッダー
 
-Install the dependencies:
+## 🛠 技術スタック
 
-```bash
-npm install
+- **フレームワーク**: Next.js 15.5.0 (App Router)
+- **言語**: TypeScript
+- **スタイリング**: Tailwind CSS
+- **状態管理**: React Context API
+- **認証**: ローカルストレージベース
+- **API**: サーバーアクション（Server Actions）
+
+## 📁 プロジェクト構造
+
+```
+frontend/src/
+├── app/                          # Next.js App Router
+│   ├── (dashboard)/              # 認証後のページグループ
+│   │   ├── layout.tsx            # 認証後レイアウト（ナビゲーションバー付き）
+│   │   └── question/             # 質問ページ
+│   │       ├── page.tsx          # 性格診断ページ
+│   │       └── question.css      # 質問ページのスタイル
+│   ├── demo/                     # デモページ
+│   │   └── page.tsx
+│   ├── signup/                   # サインアップページ
+│   │   └── page.tsx
+│   ├── globals.css               # グローバルスタイル
+│   ├── layout.tsx                # ルートレイアウト
+│   └── page.tsx                  # ランディングページ
+├── components/                   # 再利用可能コンポーネント
+│   ├── Hello.tsx                 # 挨拶コンポーネント
+│   ├── ProtectedRoute.tsx        # 認証保護コンポーネント
+│   ├── SignupForm.tsx            # サインアップフォーム
+│   └── SignupModal.tsx           # サインアップモーダル
+├── contexts/                     # React Context
+│   └── AuthContext.tsx           # 認証状態管理
+├── hooks/                        # カスタムフック
+│   └── useSignup.ts              # サインアップロジック
+└── lib/                          # ユーティリティ
+    └── actions/                  # サーバーアクション
+        └── auth.ts               # 認証関連API
 ```
 
-### Development
+## 🚀 セットアップ
 
-Start the development server with HMR:
+### 前提条件
+
+- Node.js 18.0.0 以上
+- npm, yarn, pnpm, または bun
+
+### インストール
+
+```bash
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動
+npm run dev
+```
+
+### 環境変数
+
+`.env.local`ファイルを作成して以下の環境変数を設定：
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+## 📱 使用方法
+
+### 開発サーバーの起動
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いてアプリケーションを確認できます。
 
-## Building for Production
-
-Create a production build:
+### ビルド
 
 ```bash
+# 本番用ビルド
 npm run build
+
+# 本番サーバーの起動
+npm start
 ```
 
-## Deployment
+## 🔐 認証フロー
 
-### Docker Deployment
+1. **ランディングページ** (`/`): アプリの紹介
+2. **サインアップ** (`/signup`): ユーザー登録
+3. **認証成功**: 自動的に質問ページにリダイレクト
+4. **質問ページ** (`/question`): 性格診断（認証必要）
+5. **ログアウト**: ナビゲーションバーからログアウト
 
-To build and run using Docker:
+## 🎨 デザインシステム
+
+- **カラーパレット**: Blue 系のグラデーション
+- **コンポーネント**: Tailwind CSS による統一されたデザイン
+- **レスポンシブ**: モバイルファーストのデザイン
+- **アニメーション**: スムーズなトランジション効果
+
+## 🔧 開発ガイド
+
+### 新しいページの追加
+
+1. `app/`ディレクトリに新しいディレクトリを作成
+2. `page.tsx`ファイルを作成
+3. 必要に応じてレイアウトファイルを追加
+
+### コンポーネントの作成
+
+1. `components/`ディレクトリに新しいコンポーネントを作成
+2. TypeScript インターフェースを定義
+3. 必要に応じてカスタムフックを作成
+
+### 認証が必要なページの作成
+
+```tsx
+import ProtectedRoute from "@/components/ProtectedRoute";
+
+export default function ProtectedPage() {
+  return (
+    <ProtectedRoute>
+      <div>認証が必要なコンテンツ</div>
+    </ProtectedRoute>
+  );
+}
+```
+
+## 🧪 テスト
 
 ```bash
-docker build -t my-app .
+# テストの実行
+npm test
 
-# Run the container
-docker run -p 3000:3000 my-app
+# テストカバレッジの確認
+npm run test:coverage
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+## 📦 デプロイ
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+### Vercel（推奨）
 
-### DIY Deployment
+1. GitHub リポジトリを Vercel に接続
+2. 環境変数を設定
+3. 自動デプロイが有効
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+### その他のプラットフォーム
 
-Make sure to deploy the output of `npm run build`
+```bash
+# 静的エクスポート
+npm run export
 
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+# Docker
+docker build -t akinaitor-frontend .
+docker run -p 3000:3000 akinaitor-frontend
 ```
 
-## Styling
+## 🤝 コントリビューション
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+1. このリポジトリをフォーク
+2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを作成
 
----
+## 📄 ライセンス
 
-Built with ❤️ using React Router.
+このプロジェクトは MIT ライセンスの下で公開されています。
+
+## 🆘 トラブルシューティング
+
+### よくある問題
+
+**Q: 認証状態が保持されない**
+A: ブラウザのローカルストレージが有効になっているか確認してください。
+
+**Q: API エラーが発生する**
+A: バックエンドサーバーが起動しているか、環境変数が正しく設定されているか確認してください。
+
+**Q: ビルドエラーが発生する**
+A: Node.js のバージョンが 18.0.0 以上であることを確認してください。
+
+## 📞 サポート
+
+問題が発生した場合は、GitHub の Issues ページで報告してください。
