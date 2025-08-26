@@ -1,11 +1,23 @@
-# Hackathon 2025 Project
+# アキネーター風性格診断アプリ
 
-フロントエンドとバックエンドを含むフルスタック Web アプリケーション
+Next.js 15.5.0 と FastAPI を使用したアキネーター風の性格診断アプリケーションです。
+
+## 🎯 プロジェクト概要
+
+このアプリケーションは、ユーザーが質問に回答することで、AI が性格タイプを診断するアキネーター風のシステムです。
+
+### 主な機能
+
+- **ユーザー認証**: JWT ベースのセキュアな認証システム
+- **性格診断**: アキネーター風の質問に回答して性格タイプを診断
+- **AI 分析**: Google Gemini API を使用した高度な性格分析
+- **レスポンシブデザイン**: モバイルファーストの美しい UI
+- **リアルタイム処理**: 高速な質問応答システム
 
 ## 🚀 プロジェクト構成
 
-- `frontend/` - React Router v7 + Vite フロントエンド
-- `backend/` - FastAPI バックエンド
+- `frontend/` - Next.js 15.5.0 フロントエンド（App Router）
+- `backend/` - FastAPI バックエンド（JWT 認証 + Gemini API）
 - `docker-compose.yml` - Docker Compose 設定
 - `Makefile` - 開発用コマンド集
 
@@ -29,7 +41,7 @@ make dev
 
 ### 3. アクセス
 
-- **フロントエンド**: http://localhost:5173
+- **フロントエンド**: http://localhost:3000
 - **バックエンド API**: http://localhost:8000
 - **API ドキュメント**: http://localhost:8000/docs
 
@@ -51,6 +63,7 @@ make up                # Docker Composeでアプリケーションを起動
 make up-frontend       # フロントエンドのみDockerで起動
 make up-backend        # バックエンドのみDockerで起動
 make down              # アプリケーションを停止
+make remake            # アプリケーションを再構築（down + build + up）
 make logs              # ログを表示
 make logs-frontend     # フロントエンドのログを表示
 make logs-backend      # バックエンドのログを表示
@@ -61,7 +74,7 @@ make clean             # コンテナとイメージを削除
 
 ```bash
 make dev               # フロントエンドとバックエンドを同時起動
-make dev-frontend      # フロントエンド開発サーバーを起動 (http://localhost:5173)
+make dev-frontend      # フロントエンド開発サーバーを起動 (http://localhost:3000)
 make dev-backend       # バックエンド開発サーバーを起動 (http://localhost:8000)
 ```
 
@@ -146,16 +159,19 @@ make test-backend
 
 ### フロントエンド
 
-- **React Router v7** - ルーティング
-- **Vite** - ビルドツール
+- **Next.js 15.5.0** - React フレームワーク（App Router）
 - **TypeScript** - 型安全性
 - **Tailwind CSS** - スタイリング
+- **React Context API** - 状態管理
 
 ### バックエンド
 
 - **FastAPI** - Web フレームワーク
 - **Uvicorn** - ASGI サーバー
 - **Pydantic** - データバリデーション
+- **SQLAlchemy** - ORM
+- **JWT** - 認証
+- **Google Gemini API** - AI 分析
 - **Python 3.x** - プログラミング言語
 
 ### インフラ
