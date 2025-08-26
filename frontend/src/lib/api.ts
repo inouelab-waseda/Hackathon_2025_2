@@ -1,15 +1,4 @@
-// 環境に応じてAPI URLを決定
-const getApiBaseUrl = (): string => {
-  // ブラウザ環境では常にlocalhostを使用
-  if (typeof window !== "undefined") {
-    return "http://localhost:8000";
-  }
-
-  // サーバーサイド（SSR）では環境変数を使用
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-};
-
-const API_BASE_URL = getApiBaseUrl();
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -122,63 +111,4 @@ export async function apiDelete<T = unknown>(
   endpoint: string
 ): Promise<ApiResponse<T>> {
   return apiRequest<T>(endpoint, { method: "DELETE" });
-}
-
-// 質問関連の型定義
-export interface QuestionRequest {
-  current_num: number;
-  num_questions: number;
-}
-
-export interface QuestionResponse {
-  question: string;
-  current_num: number;
-  total_questions: number;
-}
-
-export interface AnswerRequest {
-  answer: string;
-  current_num: number;
-}
-
-export interface AnswerResponse {
-  message: string;
-  current_num: number;
-}
-
-export interface ProposalResponse {
-  proposal: string;
-}
-
-export interface SessionData {
-  questions: string[];
-  answers: string[];
-  current_num: number;
-}
-
-// 質問関連のAPI関数
-export async function getQuestion(
-  request: QuestionRequest
-): Promise<ApiResponse<QuestionResponse>> {
-  return apiPost<QuestionResponse>("/api/questions", request);
-}
-
-export async function saveAnswer(
-  request: AnswerRequest
-): Promise<ApiResponse<AnswerResponse>> {
-  return apiPost<AnswerResponse>("/api/questions/answer", request);
-}
-
-export async function getProposal(): Promise<ApiResponse<ProposalResponse>> {
-  return apiPost<ProposalResponse>("/api/questions/proposal", {});
-}
-
-export async function getSessionData(): Promise<ApiResponse<SessionData>> {
-  return apiGet<SessionData>("/api/questions/session");
-}
-
-export async function resetSession(): Promise<
-  ApiResponse<{ message: string }>
-> {
-  return apiPost<{ message: string }>("/api/questions/reset", {});
 }

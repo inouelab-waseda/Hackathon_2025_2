@@ -11,7 +11,6 @@ services:
       - ./backend:/app
     environment:
       - PYTHONPATH=/app
-      - GEMINI_API_KEY=AIzaSyDHnh6IpaUbNQSoj63Bvf0B-EkCBP1gDbs
     networks:
       - app-network
 
