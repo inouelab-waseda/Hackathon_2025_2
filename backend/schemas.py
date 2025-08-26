@@ -62,3 +62,27 @@ class UserLogin(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     message: str
+
+# 質問関連スキーマ
+class QuestionRequest(BaseModel):
+    current_num: int = 0
+    num_questions: int = 5
+
+class QuestionResponse(BaseModel):
+    question: str
+    current_num: int
+    total_questions: int
+
+class AnswerRequest(BaseModel):
+    answer: str
+    current_num: int
+
+class AnswerResponse(BaseModel):
+    message: str
+    current_num: int
+
+class ProposalRequest(BaseModel):
+    pass
+
+class ProposalResponse(BaseModel):
+    proposal: str
