@@ -1,20 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { signupAction, SignupData, SignupResponse } from "@/lib/actions/auth";
+import { loginAction, LoginData, LoginResponse } from "@/lib/actions/auth";
+import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
-export function useSignup() {
-  const [formData, setFormData] = useState<SignupData>({
+export function useLogin() {
+  const [formData, setFormData] = useState<LoginData>({
     email: "",
     password: "",
-    full_name: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // const { login } = useAuth(); // 現在は使用していないためコメントアウト
+  const { login } = useAuth();
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,20 +32,25 @@ export function useSignup() {
     setSuccess("");
 
     try {
-      const result: SignupResponse = await signupAction(formData);
+      const result: LoginResponse = await loginAction(formData);
 
       if (result.success) {
-        setSuccess(result.message || "アカウントが正常に作成されました！");
-        setFormData({ email: "", password: "", full_name: "" });
+        setSuccess(result.message || "ログインに成功しました！");
+        setFormData({ email: "", password: "" });
 
-        // 2秒後にログインページにリダイレクト
+        // ログイン成功時にユーザー状態とトークンを設定
+        if (result.user && result.token) {
+          login(result.user, result.token);
+        }
+
+        // 2秒後に質問ページにリダイレクト
         setTimeout(() => {
-          router.push("/login");
+          router.push("/question");
         }, 2000);
 
         return { success: true };
       } else {
-        setError(result.error || "サインアップに失敗しました。");
+        setError(result.error || "ログインに失敗しました。");
         return { success: false };
       }
     } catch {
@@ -57,7 +62,7 @@ export function useSignup() {
   };
 
   const resetForm = () => {
-    setFormData({ email: "", password: "", full_name: "" });
+    setFormData({ email: "", password: "" });
     setError("");
     setSuccess("");
   };
