@@ -6,14 +6,9 @@ import LoginForm from "./LoginForm";
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: () => void;
 }
 
-export default function LoginModal({
-  isOpen,
-  onClose,
-  onSuccess,
-}: LoginModalProps) {
+export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -29,7 +24,7 @@ export default function LoginModal({
           </button>
         </div>
 
-        <LoginForm onSuccess={onSuccess || onClose} />
+        <LoginForm onSuccess={onClose} />
       </div>
     </div>
   );

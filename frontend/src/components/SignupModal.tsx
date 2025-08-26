@@ -24,7 +24,7 @@ export default function SignupModal({ isOpen, onClose }: SignupModalProps) {
           </button>
         </div>
 
-        <SignupForm />
+        <SignupForm onSuccess={onClose} />
       </div>
     </div>
   );

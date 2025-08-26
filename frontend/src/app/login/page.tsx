@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -15,23 +14,9 @@ export default function LoginPage() {
   }, []);
 
   const handleClose = () => {
-    if (isRedirecting) {
-      console.log("LoginPage: Already redirecting, skipping handleClose");
-      return;
-    }
-
     setIsModalOpen(false);
     // モーダルが閉じられたらルートページに戻る
-    console.log("LoginPage: handleClose called, redirecting to /");
-    setIsRedirecting(true);
     router.push("/");
-  };
-
-  const handleLoginSuccess = () => {
-    console.log("LoginPage: Login successful, redirecting to /question");
-    setIsRedirecting(true);
-    // ログイン成功時は/questionに遷移
-    router.replace("/question");
   };
 
   return (
@@ -43,11 +28,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <LoginModal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        onSuccess={handleLoginSuccess}
-      />
+      <LoginModal isOpen={isModalOpen} onClose={handleClose} />
     </div>
   );
 }
