@@ -31,6 +31,30 @@ export function useLogin() {
     setError("");
     setSuccess("");
 
+    // クライアントサイドのバリデーション
+    const trimmedEmail = formData.email.trim();
+    const trimmedPassword = formData.password.trim();
+
+    if (!trimmedEmail) {
+      setError("メールアドレスを入力してください");
+      setIsLoading(false);
+      return { success: false };
+    }
+
+    if (!trimmedPassword) {
+      setError("パスワードを入力してください");
+      setIsLoading(false);
+      return { success: false };
+    }
+
+    // メールアドレスの形式チェック
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError("メールアドレスの形式が正しくありません");
+      setIsLoading(false);
+      return { success: false };
+    }
+
     try {
       const result: LoginResponse = await loginAction(formData);
 
@@ -40,17 +64,45 @@ export function useLogin() {
 
         // ログイン成功時にユーザー状態とトークンを設定
         if (result.user && result.token) {
-          login(result.user, result.token);
+          console.log("Login successful, setting user state");
+          login(result.user, result.token, () => {
+            // 認証状態が更新された後に遷移
+            console.log("Login callback executed, navigating to /question");
+            // ログインページから呼ばれている場合は、ログインページのonSuccessが処理する
+            // それ以外の場合は直接遷移
+            if (window.location.pathname === "/login") {
+              console.log(
+                "Login page detected, letting page handle navigation"
+              );
+            } else {
+              router.replace("/question");
+            }
+          });
+        } else {
+          // ユーザー情報が取得できない場合は直接遷移
+          console.log("No user data received, navigating to /question");
+          if (window.location.pathname !== "/login") {
+            router.replace("/question");
+          }
         }
-
-        // 2秒後に質問ページにリダイレクト
-        setTimeout(() => {
-          router.push("/question");
-        }, 2000);
 
         return { success: true };
       } else {
-        setError(result.error || "ログインに失敗しました。");
+        // エラーがオブジェクトの場合に備えて文字列に変換
+        const errorMessage =
+          typeof result.error === "string"
+            ? result.error
+            : "ログインに失敗しました。";
+
+        // クライアントサイドで既にチェック済みのエラーは表示しない
+        if (
+          !errorMessage.includes("必須項目が入力されていません") &&
+          !errorMessage.includes("メールアドレスを入力してください") &&
+          !errorMessage.includes("パスワードを入力してください") &&
+          !errorMessage.includes("メールアドレスの形式が正しくありません")
+        ) {
+          setError(errorMessage);
+        }
         return { success: false };
       }
     } catch {

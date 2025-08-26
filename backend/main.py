@@ -10,7 +10,8 @@ from models import Item, User
 from schemas import (
     ItemCreate, ItemUpdate, ItemResponse,
     UserCreate, UserUpdate, UserResponse,
-    HealthResponse, Token, UserLogin
+    HealthResponse, Token, UserLogin,
+    QuestionRequest, QuestionResponse, AnswerRequest, AnswerResponse, ProposalRequest, ProposalResponse
 )
 from crud import (
     create_item, get_items, get_item, update_item, delete_item,
@@ -21,6 +22,7 @@ from auth import (
     authenticate_user, create_access_token, get_current_active_user,
     ACCESS_TOKEN_EXPIRE_MINUTES
 )
+from genai_service import GenaiService
 
 app = FastAPI(
     title="Hackathon 2025 API",
@@ -227,6 +229,93 @@ async def delete_existing_user(
     if not success:
         raise HTTPException(status_code=404, detail="ユーザーが見つかりません")
     return {"message": "ユーザーが正常に削除されました"}
+
+# 質問関連APIエンドポイント
+# セッション管理用の辞書（実際の運用ではRedisなどを使用することを推奨）
+genai_sessions = {}
+
+def get_genai_service(user_id: int) -> GenaiService:
+    """ユーザー固有のGenaiServiceインスタンスを取得"""
+    if user_id not in genai_sessions:
+        genai_sessions[user_id] = GenaiService()
+    return genai_sessions[user_id]
+
+@app.post("/api/questions", response_model=QuestionResponse)
+async def get_question(
+    request: QuestionRequest,
+    current_user: User = Depends(get_current_active_user)
+):
+    """新しい質問を取得"""
+    try:
+        genai_service = get_genai_service(current_user.id)
+        question = genai_service.get_question(
+            current_num=request.current_num,
+            num_questions=request.num_questions
+        )
+        return QuestionResponse(
+            question=question,
+            current_num=request.current_num + 1,
+            total_questions=request.num_questions
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"質問の生成に失敗しました: {str(e)}")
+
+@app.post("/api/questions/answer", response_model=AnswerResponse)
+async def save_answer(
+    request: AnswerRequest,
+    current_user: User = Depends(get_current_active_user)
+):
+    """回答を保存"""
+    try:
+        genai_service = get_genai_service(current_user.id)
+        genai_service.save_answer(
+            answer=request.answer,
+            current_num=request.current_num
+        )
+        return AnswerResponse(
+            message="回答が正常に保存されました",
+            current_num=request.current_num + 1
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"回答の保存に失敗しました: {str(e)}")
+
+@app.post("/api/questions/proposal", response_model=ProposalResponse)
+async def get_proposal(
+    request: ProposalRequest,
+    current_user: User = Depends(get_current_active_user)
+):
+    """自分磨きの提案を取得"""
+    try:
+        genai_service = get_genai_service(current_user.id)
+        proposal = genai_service.get_proposal()
+        return ProposalResponse(proposal=proposal)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"提案の生成に失敗しました: {str(e)}")
+
+@app.get("/api/questions/session")
+async def get_session_data(current_user: User = Depends(get_current_active_user)):
+    """現在のセッションデータを取得"""
+    try:
+        genai_service = get_genai_service(current_user.id)
+        return genai_service.get_session_data()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"セッションデータの取得に失敗しました: {str(e)}")
+
+@app.post("/api/questions/reset")
+async def reset_session(current_user: User = Depends(get_current_active_user)):
+    """セッションをリセット"""
+    try:
+        genai_service = get_genai_service(current_user.id)
+        genai_service.reset_session()
+        return {"message": "セッションが正常にリセットされました"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"セッションのリセットに失敗しました: {str(e)}")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

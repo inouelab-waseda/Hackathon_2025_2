@@ -3,11 +3,7 @@
 import React from "react";
 import { useSignup } from "@/hooks/useSignup";
 
-interface SignupFormProps {
-  onSuccess?: () => void;
-}
-
-export default function SignupForm({ onSuccess }: SignupFormProps) {
+export default function SignupForm() {
   const {
     formData,
     isLoading,
@@ -19,11 +15,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
 
   const onSubmit = async (e: React.FormEvent) => {
     const result = await handleSubmit(e);
-    if (result.success && onSuccess) {
-      setTimeout(() => {
-        onSuccess();
-      }, 2000);
-    }
+    // useSignupフックで既に遷移処理が行われるため、ここでは何もしない
   };
 
   return (

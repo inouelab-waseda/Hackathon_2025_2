@@ -1,6 +1,6 @@
-# Hackathon 2025 Backend API
+# アキネーター風性格診断アプリ - バックエンド
 
-FastAPI と SQLite を使用したバックエンド API です。JWT 認証機能付き。
+FastAPI と SQLite を使用したバックエンド API です。JWT 認証機能と Google Gemini API による性格分析機能を提供します。
 
 ## 機能
 
@@ -8,18 +8,19 @@ FastAPI と SQLite を使用したバックエンド API です。JWT 認証機�
 - **非同期処理**: SQLAlchemy の非同期機能を活用
 - **JWT 認証**: セキュアなトークンベース認証
 - **パスワードハッシュ化**: bcrypt による安全なパスワード保存
-- **RESTful API**: アイテムとユーザーの CRUD 操作
+- **性格分析**: Google Gemini API を使用した高度な性格診断
+- **質問管理**: 動的な質問生成と回答処理
+- **RESTful API**: ユーザーと質問の CRUD 操作
 - **自動ドキュメント**: FastAPI の自動生成ドキュメント
 
 ## データベース構造
 
-### Items テーブル
+### Questions テーブル
 
 - `id`: 主キー
-- `name`: アイテム名（必須）
-- `description`: 説明（オプション）
+- `question_text`: 質問文（必須）
+- `category`: 質問カテゴリ（オプション）
 - `created_at`: 作成日時
-- `updated_at`: 更新日時
 - `is_active`: アクティブ状態
 
 ### Users テーブル
@@ -63,13 +64,18 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 - `GET /health` - API の状態確認
 
-### アイテム管理（認証必須）
+### 質問管理（認証必須）
 
-- `GET /api/items` - アイテム一覧取得
-- `POST /api/items` - アイテム作成
-- `GET /api/items/{item_id}` - 特定アイテム取得
-- `PUT /api/items/{item_id}` - アイテム更新
-- `DELETE /api/items/{item_id}` - アイテム削除
+- `GET /api/questions` - 質問一覧取得
+- `POST /api/questions` - 質問作成
+- `GET /api/questions/{question_id}` - 特定質問取得
+- `PUT /api/questions/{question_id}` - 質問更新
+- `DELETE /api/questions/{question_id}` - 質問削除
+
+### 性格分析（認証必須）
+
+- `POST /api/analyze` - 回答に基づく性格分析
+- `GET /api/analysis-history` - 分析履歴取得
 
 ### ユーザー管理（認証必須）
 
@@ -115,8 +121,22 @@ curl -X POST "http://localhost:8000/api/auth/login" \
 ### 3. 認証が必要な API の使用
 
 ```bash
-curl -X GET "http://localhost:8000/api/items" \
+curl -X GET "http://localhost:8000/api/questions" \
      -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### 4. 性格分析の実行
+
+```bash
+curl -X POST "http://localhost:8000/api/analyze" \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+     -H "Content-Type: application/json" \
+     -d '{
+       "answers": [
+         {"question_id": 1, "answer": "はい"},
+         {"question_id": 2, "answer": "いいえ"}
+       ]
+     }'
 ```
 
 ## API ドキュメント
@@ -132,6 +152,7 @@ curl -X GET "http://localhost:8000/api/items" \
 - **JWT トークン**: 30 分間有効なアクセストークン
 - **CORS 設定**: フロントエンドとの安全な通信
 - **入力バリデーション**: Pydantic による型安全性
+- **API キー管理**: Google Gemini API キーの安全な管理
 
 ## データベースファイル
 
@@ -146,6 +167,20 @@ SQLite データベースファイル（`hackathon.db`）は自動的に作成�
 2. `schemas.py`に Pydantic スキーマを追加
 3. `crud.py`に CRUD 操作を追加
 4. `main.py`に API エンドポイントを追加
+
+### 環境変数の設定
+
+Google Gemini API を使用するために、以下の環境変数を設定してください：
+
+```bash
+export GOOGLE_API_KEY="your-google-api-key"
+```
+
+または、`.env`ファイルを作成：
+
+```env
+GOOGLE_API_KEY=your-google-api-key
+```
 
 ### データベースマイグレーション
 

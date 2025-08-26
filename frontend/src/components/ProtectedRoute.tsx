@@ -16,30 +16,36 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     const validateToken = async () => {
-      if (!isLoading && isAuthenticated) {
-        setIsValidating(true);
-        try {
-          // JWTトークンの有効性をチェック
-          const response = await apiGet("/api/auth/me");
-          if (!response.success) {
-            // トークンが無効な場合はログアウト
-            logout();
-            router.push("/login");
-          }
-        } catch (error) {
-          console.error("トークン検証エラー:", error);
-          logout();
-          router.push("/login");
-        } finally {
-          setIsValidating(false);
-        }
-      } else if (!isLoading && !isAuthenticated) {
-        router.push("/login");
+      console.log(
+        "ProtectedRoute: isLoading=",
+        isLoading,
+        "isAuthenticated=",
+        isAuthenticated
+      );
+
+      // ローディング中は待機
+      if (isLoading) {
+        console.log("ProtectedRoute: Still loading, waiting...");
+        return;
+      }
+
+      // 認証状態をチェック
+      if (isAuthenticated) {
+        console.log("ProtectedRoute: User is authenticated, allowing access");
+        setIsValidating(false);
+      } else {
+        console.log(
+          "ProtectedRoute: User is not authenticated, redirecting to login"
+        );
+        // リダイレクトを有効化
+        setTimeout(() => {
+          router.replace("/login");
+        }, 100);
       }
     };
 
     validateToken();
-  }, [isAuthenticated, isLoading, logout, router]);
+  }, [isAuthenticated, isLoading, router]);
 
   if (isLoading || isValidating) {
     return (
@@ -51,6 +57,14 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
       </div>
     );
   }
+
+  // デバッグ用：認証状態を表示
+  console.log(
+    "ProtectedRoute render: isAuthenticated=",
+    isAuthenticated,
+    "isLoading=",
+    isLoading
+  );
 
   if (!isAuthenticated) {
     return null; // リダイレクト中は何も表示しない
