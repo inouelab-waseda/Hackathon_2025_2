@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useLogin } from "@/hooks/useLogin";
+import { useLogin } from "../hooks/useLogin";
 
 interface LoginFormProps {
   onSuccess?: () => void;
