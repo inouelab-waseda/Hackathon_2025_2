@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 from google import genai
 
-class GenaiService:
+class QuestionService:
     def __init__(self):
         load_dotenv()  # .envファイルを読み込む
         self.api_key = os.getenv("GEMINI_API_KEY")
