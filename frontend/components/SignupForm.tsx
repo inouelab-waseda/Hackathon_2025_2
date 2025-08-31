@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useSignup } from "@/hooks/useSignup";
+import { useSignup } from "../hooks/useSignup";
 
 export default function SignupForm() {
   const {

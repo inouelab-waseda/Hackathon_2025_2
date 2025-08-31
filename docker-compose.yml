@@ -9,9 +9,10 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+    env_file:
+      - .env
     environment:
       - PYTHONPATH=/app
-      - GEMINI_API_KEY=AIzaSyDHnh6IpaUbNQSoj63Bvf0B-EkCBP1gDbs
     networks:
       - app-network
 
@@ -24,8 +25,10 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    env_file:
+      - .env
     environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8000
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://backend:8000}
     depends_on:
       - backend
     networks:

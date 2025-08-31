@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { loginAction, LoginData, LoginResponse } from "@/lib/actions/auth";
-import { useAuth } from "@/contexts/AuthContext";
+import { loginAction, LoginData, LoginResponse } from "../lib/actions/auth";
+import { useAuth } from "../contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
 export function useLogin() {

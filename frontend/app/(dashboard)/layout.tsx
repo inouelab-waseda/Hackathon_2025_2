@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { useAuth } from "../../contexts/AuthContext";
+import ProtectedRoute from "../../components/ProtectedRoute";
 
 export default function DashboardLayout({
   children,
