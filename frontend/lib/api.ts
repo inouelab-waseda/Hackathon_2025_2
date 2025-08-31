@@ -48,6 +48,18 @@ const getAuthHeaders = (): HeadersInit => {
   return headers;
 };
 
+// 認証エラー時の処理
+const handleAuthError = () => {
+  if (typeof window !== "undefined") {
+    // ローカルストレージをクリア
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+
+    // ログインページにリダイレクト
+    window.location.href = "/login";
+  }
+};
+
 // 汎用APIリクエスト関数
 export async function apiRequest<T = unknown>(
   endpoint: string,
@@ -66,6 +78,16 @@ export async function apiRequest<T = unknown>(
     });
 
     if (!response.ok) {
+      // 認証エラーの場合
+      if (response.status === 401) {
+        console.log("認証エラーが発生しました。ログアウト処理を実行します。");
+        handleAuthError();
+        return {
+          success: false,
+          error: "認証が必要です。再度ログインしてください。",
+        };
+      }
+
       const errorData = await response.json().catch(() => ({}));
       return {
         success: false,

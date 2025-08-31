@@ -19,5 +19,5 @@ COPY . .
 # ポート8000を公開
 EXPOSE 8000
 
-# アプリケーションを起動
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# アプリケーションを起動（MVC版）
+CMD ["uvicorn", "main_mvc:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

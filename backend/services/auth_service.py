@@ -41,7 +41,7 @@ async def authenticate_user(db: AsyncSession, email: str, password: str):
     """ユーザー認証"""
     # 循環インポートを避けるために、ここで直接クエリを実行
     from sqlalchemy import select
-    from models import User
+    from models.database_models import User
     
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
@@ -72,7 +72,7 @@ async def get_current_user(
     
     # 循環インポートを避けるために、ここで直接クエリを実行
     from sqlalchemy import select
-    from models import User
+    from models.database_models import User
     
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
