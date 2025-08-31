@@ -1,6 +1,6 @@
 "use client";
 
-import SignupModal from "@/components/SignupModal";
+import SignupModal from "../../components/SignupModal";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 

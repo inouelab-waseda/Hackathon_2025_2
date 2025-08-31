@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signupAction, SignupData, SignupResponse } from "@/lib/actions/auth";
+import { signupAction, SignupData, SignupResponse } from "../lib/actions/auth";
 import { useRouter } from "next/navigation";
 
 export function useSignup() {
